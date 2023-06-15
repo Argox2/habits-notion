@@ -4,6 +4,8 @@ import scoreList from "./scoreList.js";
 
 const data = await getNotionDB();
 
+console.log(data);
+
 const table = new Table({
   head: ['Name', 'Score'], 
   colWidths: [20, 10],
@@ -12,7 +14,7 @@ const table = new Table({
 
 data.map((item) => {
   const key = item.key.replace(/'/g, '');
-  const score = scoreList(item.values.reverse());
+  const score = scoreList(item.values, item.max);
 
   table.push([key, score + '%']);
 });

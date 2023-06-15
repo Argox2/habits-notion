@@ -22,15 +22,25 @@ export default async function getNotionDB() {
         if (!extractedValues[formattedKey]) {
           extractedValues[formattedKey] = []
         }
-        extractedValues[formattedKey].push(value.checkbox);
-      } 
+        extractedValues[formattedKey].push(value.checkbox ? 1 : 0);
+      } else if (value.type === 'status') {
+        if (!extractedValues[formattedKey]) {
+          extractedValues[formattedKey] = []
+        }
+        extractedValues[formattedKey].push(Number(value.status.name));
+      }
     });
   }
 
   const extractedLists = Object.entries(extractedValues).map(([key, value]) => {
+    
+    value.reverse();
+    let max = Math.max(...value);
+
     return {
       key,
-      values: value
+      values: value,
+      max
     };
   });
 

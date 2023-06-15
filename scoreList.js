@@ -1,6 +1,6 @@
 import {score} from "./score.js";
 
-export default function scoreList(values) {
+export default function scoreList(values, max) {
   // fromTimestamp, toTimestamp
   // fromTimestamp is equal to the first true. 
   // toTimestamp is equal to today. 
@@ -24,7 +24,7 @@ export default function scoreList(values) {
       currentDate.setDate(currentDate.getDate() + 1); 
       index++; 
     } else {
-      scoreList.push(score(scoreList.length === 0 ? 0.0 : scoreList[scoreList.length - 1], values[index] ? 1 : 0)); // How convert the values to true here? value ? 1 : 0
+      scoreList.push(score(scoreList.length === 0 ? 0.0 : scoreList[scoreList.length - 1], values[index] / max)); // How convert the values to true here? value ? 1 : 0
       currentDate.setDate(currentDate.getDate() + 1);
       index++;
     }
