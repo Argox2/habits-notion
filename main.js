@@ -1,14 +1,12 @@
-import getNotionDB from "./getDBTest.js";
+import getNotionDB from "./getDB.js";
 import Table from "cli-table";
 import scoreList from "./scoreList.js";
 
 const data = await getNotionDB();
 
-console.log(data);
-
 const table = new Table({
   head: ['Name', 'Score'], 
-  colWidths: [20, 10],
+  colWidths: [50, 10],
   style: {'padding-left': 1, "padding-right": 1}
 }); 
 
