@@ -7,29 +7,38 @@ export default async function getDBPages(notionKey, databaseId) {
     auth: notionKey
   });
 
+  const propertyArrays = {};
+  let hasMore = true;
+  let startCursor;
+
   try {
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      sorts: [
-        {
-          property: "Created",
-          direction: "descending"
+    while(hasMore) {
+      const response = await notion.databases.query({
+        database_id: databaseId,
+        sorts: [{property: "Created", direction: "descending"}],
+        start_cursor: startCursor,
+      });
+
+      response.results.forEach(page => {
+
+        for (const [key, value] of Object.entries(page.properties)) {
+          if (value.type === 'status') {
+            if (!propertyArrays[key]) {
+              propertyArrays[key] = [];
+            }
+
+            const numVal = parseFloat(value.status.name) || 0;
+            propertyArrays[key].push(numVal);
+          }
         }
-      ],
-      page_size: 3,
-    });
+      });
 
-    response.results.forEach(page => {const habits = {};
+      hasMore = response.has_more;
+      startCursor = response.next_cursor;
+    }
 
-      for (const [key, value] of Object.entries(page.properties)) {
-        if (value.type === 'status') {
-          habits[key] = value.status.name;
-        }
-      }
 
-      console.log(`Page ID: ${page.id}`);
-      console.log(habits);
-    });
+    console.log(propertyArrays);
 
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -37,4 +46,3 @@ export default async function getDBPages(notionKey, databaseId) {
   }
 }
 
-getDBPages(process.env.NOTION_KEY , process.env.NOTION_PAGE_ID);

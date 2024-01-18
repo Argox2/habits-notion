@@ -1,8 +1,10 @@
-import getNotionDB from "./getDB.js";
+import getDBPages from "./getDB.js";
+import 'dotenv/config';
+
 import Table from "cli-table";
 import scoreList from "./scoreList.js";
 
-const data = await getNotionDB();
+const data = await getDBPages(process.env.NOTION_KEY , process.env.NOTION_PAGE_ID);
 
 const table = new Table({
   head: ['Name', 'Score'], 
