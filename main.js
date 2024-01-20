@@ -5,11 +5,22 @@ import scoreList from "./scoreList.js";
 
 const data = await getDBPages(process.env.NOTION_KEY , process.env.NOTION_PAGE_ID);
 
-const table = new Table({
+const tableHead = new Table({
   head: ['Name', 'Score', 'Week'],
   colWidths: [50, 10, 10],
   style: {'padding-left': 1, "padding-right": 1}
-}); 
+});
+
+
+const tableTotal = new Table({
+  colWidths: [50, 10, 10],
+  style: {'padding-left': 1, "padding-right": 1}
+});
+
+const tableHabits = new Table({
+  colWidths: [50, 10, 10],
+  style: {'padding-left': 1, "padding-right": 1}
+});
 
 let habits = [];
 let total = [];
@@ -23,19 +34,21 @@ Object.entries(data).forEach(([key, values]) => {
   habits.push({ key, ...habitData });
 });
 
-habits.sort((a, b) => b.score - a.score);
-
-habits.forEach(({ key, score, improveWeek }) => {
-  table.push([key, score + '%', improveWeek + '%']);
-});
-
 let roundTotal = total.map((x) => Math.round(x * 10) / 100);
 
 const totalData = calData(roundTotal);
 
-table.push(["Total", totalData.score + '%', totalData.improveWeek + '%']);
+tableTotal.push(["Total", totalData.score + '%', totalData.improveWeek + '%']);
 
-console.log(table.toString());
+habits.sort((a, b) => b.score - a.score);
+
+habits.forEach(({ key, score, improveWeek }) => {
+  tableHabits.push([key, score + '%', improveWeek + '%']);
+});
+
+console.log(tableHead.toString());
+console.log(tableTotal.toString());
+console.log(tableHabits.toString());
 
 
 
