@@ -1,32 +1,24 @@
-import {score} from "./score.js";
+import getScore from "./getScore.js"
 
-export default function scoreList(values, max) {
+export default function scoreList(values) {
 
   let scoreList = [];
-  
-  const firstDate = new Date('2023-05-30'); 
-  const currentDate = new Date(firstDate);
-  const today = new Date().setHours(0, 0, 0, 0);
-  const daysToFirstTrue = values.findIndex(num => num !== 0);  
-  const fromDate = new Date(firstDate);
-  fromDate.setDate(fromDate.getDate() + daysToFirstTrue);
+  let score = 0;
 
-  let index = 0;
+  values.forEach(value => {
+    score = getScore(score, value);
+    scoreList.push(score);
+  })
 
-  while (currentDate <= today) {
-    if (currentDate < fromDate) { // If the timestamp given happens before the fisrt repetition of the, returns a score with value zero.
-      scoreList.push(0.0); 
-      currentDate.setDate(currentDate.getDate() + 1); 
-      index++; 
-    } else {
-      scoreList.push(score(scoreList.length === 0 ? 0.0 : scoreList[scoreList.length - 1], values[index] / max));       
-      currentDate.setDate(currentDate.getDate() + 1);
-      index++;
-    }
-  }
-  
-  const todayScore = Math.round(scoreList[scoreList.length - 1] * 100);
-
-  return todayScore;
+  // return Math.round(scoreList.length - 2) * 100
+  return scoreList;
 }
 
+// let test = [];
+
+// for (let i = 0; i < 101; i++) {
+//     test.push(1);
+// }
+
+// const list = scoreList(test)
+// console.log(list);

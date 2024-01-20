@@ -1,22 +1,51 @@
+import Table from "cli-table3";
 import getDBPages from "./getDB.js";
 import 'dotenv/config';
-
-import Table from "cli-table";
 import scoreList from "./scoreList.js";
 
 const data = await getDBPages(process.env.NOTION_KEY , process.env.NOTION_PAGE_ID);
 
 const table = new Table({
-  head: ['Name', 'Score'], 
-  colWidths: [50, 10],
+  head: ['Name', 'Score', 'Week'],
+  colWidths: [50, 10, 10],
   style: {'padding-left': 1, "padding-right": 1}
 }); 
 
-data.map((item) => {
-  const key = item.key.replace(/'/g, '');
-  const score = scoreList(item.values, item.max);
+let habits = [];
+let total = [];
 
-  table.push([key, score + '%']);
+Object.entries(data).forEach(([key, values]) => {
+
+  total = (total.length === 0 ? values.slice() : total.map((element, index) => element + values[index]));
+
+  const habitData = calData(values);
+
+  habits.push({ key, ...habitData });
 });
 
+habits.sort((a, b) => b.score - a.score);
+
+habits.forEach(({ key, score, improveWeek }) => {
+  table.push([key, score + '%', improveWeek + '%']);
+});
+
+let roundTotal = total.map((x) => Math.round(x * 10) / 100);
+
+const totalData = calData(roundTotal);
+
+table.push(["Total", totalData.score + '%', totalData.improveWeek + '%']);
+
 console.log(table.toString());
+
+
+
+function calData(vals) {
+  const scores = scoreList(vals);
+  const roundScores = scores.map(x => Math.round(x * 100));
+  const score = roundScores[roundScores.length - 2];
+  const lastWeek = roundScores[roundScores.length - 2 - 7];
+  const diff = score - lastWeek;
+  const improveWeek = (diff >= 0 ? "+ " : "- ") + Math.abs(diff);
+
+  return { score, improveWeek };
+}

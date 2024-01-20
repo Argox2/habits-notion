@@ -15,7 +15,7 @@ export default async function getDBPages(notionKey, databaseId) {
     while(hasMore) {
       const response = await notion.databases.query({
         database_id: databaseId,
-        sorts: [{property: "Created", direction: "descending"}],
+        sorts: [{property: "Created", direction: "ascending"}],
         start_cursor: startCursor,
       });
 
@@ -38,7 +38,7 @@ export default async function getDBPages(notionKey, databaseId) {
     }
 
 
-    console.log(propertyArrays);
+    return propertyArrays;
 
   } catch (error) {
     console.error("Error fetching data: ", error);
